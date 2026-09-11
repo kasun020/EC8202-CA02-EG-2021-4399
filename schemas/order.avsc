@@ -1,0 +1,23 @@
+{
+  "type": "record",
+  "name": "Order",
+  "namespace": "com.kavindu.foodorder",
+  "doc": "Food delivery purchase transaction schema for real-time Kafka stream processing",
+  "fields": [
+    {
+      "name": "orderId",
+      "type": "string",
+      "doc": "Unique food order reference (e.g., '1001', '1002')"
+    },
+    {
+      "name": "product",
+      "type": "string",
+      "doc": "Name of the purchased culinary dish or meal (e.g., 'Truffle Burger', 'Artisan Pizza')"
+    },
+    {
+      "name": "price",
+      "type": "float",
+      "doc": "Total cost of the food order item"
+    }
+  ]
+}
