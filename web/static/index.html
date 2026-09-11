@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GourmetExpress | Real-Time Food Stream Telemetry</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg-dark: #090d16;
+      --card-bg: rgba(18, 26, 43, 0.75);
+      --card-border: rgba(16, 185, 129, 0.15);
+      --accent-emerald: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+      --accent-cyan: #06b6d4;
+      --text-bright: #f8fafc;
+      --text-dim: #94a3b8;
+      --font-ui: 'Plus Jakarta Sans', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: radial-gradient(circle at 10% 20%, #064e3b 0%, #090d16 55%);
+      color: var(--text-bright);
+      font-family: var(--font-ui);
+      min-height: 100vh;
+      padding: 24px;
+      line-height: 1.5;
+    }
+
+    .wrapper { max-width: 1400px; margin: 0 auto; }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .brand { display: flex; align-items: center; gap: 14px; }
+    .brand-logo {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #10b981, #047857);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+    }
+
+    h1 {
+      font-size: 1.65rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ffffff, #a7f3d0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .tagline { font-size: 0.85rem; color: var(--text-dim); }
+
+    .stream-indicator {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: var(--accent-emerald);
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .blink {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-emerald);
+      box-shadow: 0 0 10px var(--accent-emerald);
+      animation: blinker 1.4s infinite;
+    }
+
+    @keyframes blinker { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .metric-box {
+      background: var(--card-bg);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 20px;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .metric-box:hover {
+      transform: translateY(-2px);
+      border-color: rgba(16, 185, 129, 0.4);
+    }
+
+    .metric-title {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+
+    .metric-value {
+      font-size: 1.85rem;
+      font-weight: 800;
+      font-family: var(--font-mono);
+    }
+
+    .c-emerald { color: var(--accent-emerald); }
+    .c-amber { color: var(--accent-amber); }
+    .c-rose { color: var(--accent-rose); }
+    .c-cyan { color: var(--accent-cyan); }
+
+    .center-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 960px) {
+      .center-grid { grid-template-columns: 1fr; }
+    }
+
+    .chart-box {
+      position: relative;
+      height: 320px;
+      width: 100%;
+    }
+
+    .actions-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .action-btn {
+      padding: 13px 18px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+
+    .action-btn:active { transform: scale(0.98); }
+
+    .btn-emerald {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+    }
+    .btn-emerald:hover { background: linear-gradient(135deg, #059669, #047857); }
+
+    .btn-amber {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: white;
+    }
+    .btn-amber:hover { background: linear-gradient(135deg, #d97706, #b45309); }
+
+    .btn-rose {
+      background: linear-gradient(135deg, #f43f5e, #e11d48);
+      color: white;
+    }
+    .btn-rose:hover { background: linear-gradient(135deg, #e11d48, #be123c); }
+
+    .btn-cyan {
+      background: linear-gradient(135deg, #06b6d4, #0891b2);
+      color: white;
+    }
+    .btn-cyan:hover { background: linear-gradient(135deg, #0891b2, #0e7490); }
+
+    .table-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    th {
+      background: rgba(255, 255, 255, 0.04);
+      padding: 12px 18px;
+      text-align: left;
+      font-weight: 700;
+      color: var(--text-dim);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    td {
+      padding: 12px 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+    }
+
+    tr:hover td { background: rgba(255, 255, 255, 0.02); }
+
+    .pill {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 0.74rem;
+      font-weight: 700;
+    }
+
+    .pill-served { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+    .pill-retry { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+    .pill-dlq { background: rgba(244, 63, 94, 0.15); color: #fb7185; }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <header>
+      <div class="brand">
+        <div class="brand-logo">🍜</div>
+        <div>
+          <h1>GourmetExpress | Real-Time Food Stream</h1>
+          <p class="tagline">Kavindu's Kafka Telemetry Engine • Avro Serialization • Running Avg • Kitchen Retries • DLQ</p>
+        </div>
+      </div>
+      <div>
+        <span class="stream-indicator"><span class="blink"></span> ACTIVE KAFKA BROKER</span>
+      </div>
+    </header>
+
+    <!-- Metrics Row -->
+    <div class="metrics-row">
+      <div class="metric-box">
+        <div class="metric-title">Running Average Meal Price</div>
+        <div class="metric-value c-emerald" id="val-avg">$0.00</div>
+        <div style="font-size: 0.72rem; color: var(--text-dim); margin-top: 4px;">Dynamic Incremental Formulation</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-title">Completed Food Orders</div>
+        <div class="metric-value c-cyan" id="val-orders">0</div>
+        <div style="font-size: 0.72rem; color: var(--text-dim); margin-top: 4px;">Topic: food-orders</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-title">Culinary Gross Volume</div>
+        <div class="metric-value" id="val-revenue">$0.00</div>
+        <div style="font-size: 0.72rem; color: var(--text-dim); margin-top: 4px;">Total Order Sum</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-title">Kitchen Delays (Retried)</div>
+        <div class="metric-value c-amber" id="val-retry">0</div>
+        <div style="font-size: 0.72rem; color: var(--text-dim); margin-top: 4px;">Topic: food-orders-retry</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-title">Rejected Orders (DLQ)</div>
+        <div class="metric-value c-rose" id="val-dlq">0</div>
+        <div style="font-size: 0.72rem; color: var(--text-dim); margin-top: 4px;">Topic: food-orders-dlq</div>
+      </div>
+    </div>
+
+    <!-- Center Section: Chart & Live Dispatchers -->
+    <div class="center-grid">
+      <div class="metric-box">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <h3 style="font-size: 1.05rem; font-weight: 700;">Running Average Price Trend & Instant Meal Fares</h3>
+          <span style="font-size: 0.75rem; color: var(--text-dim);">Live Streaming (WebSocket)</span>
+        </div>
+        <div class="chart-box">
+          <canvas id="dishChart"></canvas>
+        </div>
+      </div>
+
+      <div class="metric-box actions-panel">
+        <h3 style="font-size: 1.05rem; font-weight: 700;">Interactive Food Dispatcher</h3>
+        <p style="font-size: 0.78rem; color: var(--text-dim);">Produce food orders to demonstrate live stream processing:</p>
+        
+        <button class="action-btn btn-emerald" id="btn-order-normal" onclick="dispatchOrder('normal')">
+          🍽️ Dispatch 3 Gourmet Meals
+        </button>
+        <button class="action-btn btn-amber" id="btn-order-retry" onclick="dispatchOrder('transient')">
+          ⏱️ Simulate Kitchen Delay (Retry)
+        </button>
+        <button class="action-btn btn-rose" id="btn-order-dlq" onclick="dispatchOrder('permanent')">
+          🚫 Inject Expired Ticket (DLQ)
+        </button>
+        <button class="action-btn btn-cyan" id="btn-audit-dlq" onclick="inspectDLQ()">
+          🔍 Audit Dead Letter Queue (DLQ)
+        </button>
+      </div>
+    </div>
+
+    <!-- Telemetry Table -->
+    <div class="table-card">
+      <div style="padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.06);">
+        <h3 style="font-size: 1.05rem; font-weight: 700;" id="table-heading">Live Kitchen Order Stream</h3>
+        <span style="font-size: 0.75rem; color: var(--text-dim);" id="stream-note">Awaiting transactions...</span>
+      </div>
+      <div style="overflow-x: auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Ticket Ref</th>
+              <th>Culinary Dish</th>
+              <th>Price</th>
+              <th>Queue / Lifecycle</th>
+              <th>Diagnostics / Event Notes</th>
+            </tr>
+          </thead>
+          <tbody id="stream-rows">
+            <tr>
+              <td colspan="5" style="text-align: center; padding: 24px; color: var(--text-dim);">No transactions yet. Click any dispatcher button above or run the live demo script.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Chart Setup
+    const canvas = document.getElementById('dishChart').getContext('2d');
+    const dishChart = new Chart(canvas, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [
+          {
+            label: 'Running Average ($)',
+            data: [],
+            borderColor: '#10b981',
+            backgroundColor: 'rgba(16, 185, 129, 0.12)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.35
+          },
+          {
+            label: 'Dish Price ($)',
+            data: [],
+            borderColor: '#f59e0b',
+            borderWidth: 1.5,
+            borderDash: [4, 4],
+            pointRadius: 4,
+            pointBackgroundColor: '#f59e0b',
+            fill: false
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: { grid: { color: 'rgba(255, 255, 255, 0.04)' }, ticks: { color: '#94a3b8' } },
+          y: { grid: { color: 'rgba(255, 255, 255, 0.04)' }, ticks: { color: '#94a3b8' } }
+        },
+        plugins: {
+          legend: { labels: { color: '#f8fafc', font: { family: 'Plus Jakarta Sans' } } }
+        }
+      }
+    });
+
+    let liveRows = [];
+
+    // WebSocket Telemetry
+    const wsProto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsHost = `${wsProto}//${window.location.host}/ws`;
+    let socket;
+
+    function initSocket() {
+      socket = new WebSocket(wsHost);
+      socket.onmessage = (e) => {
+        const payload = JSON.parse(e.data);
+        if (payload.type === 'telemetry') {
+          updateMetricsUI(payload.data);
+        }
+      };
+      socket.onclose = () => { setTimeout(initSocket, 2000); };
+    }
+    initSocket();
+
+    function updateMetricsUI(s) {
+      document.getElementById('val-avg').innerText = `$${(s.running_average_price || 0).toFixed(2)}`;
+      document.getElementById('val-orders').innerText = s.completed_orders || 0;
+      document.getElementById('val-revenue').innerText = `$${(s.total_revenue || 0).toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+      document.getElementById('val-retry').innerText = s.retry_events || 0;
+      document.getElementById('val-dlq').innerText = s.dlq_events || 0;
+
+      if (s.recent_order) {
+        const item = s.recent_order;
+        appendChartPoint(item.orderId, s.running_average_price, item.price);
+        appendStreamRow({
+          orderId: item.orderId,
+          product: item.product,
+          price: `$${item.price.toFixed(2)}`,
+          status: 'SERVED',
+          note: 'Running average price updated'
+        });
+      }
+    }
+
+    function appendChartPoint(lbl, avgVal, instantVal) {
+      if (dishChart.data.labels.length > 25) {
+        dishChart.data.labels.shift();
+        dishChart.data.datasets[0].data.shift();
+        dishChart.data.datasets[1].data.shift();
+      }
+      dishChart.data.labels.push(lbl);
+      dishChart.data.datasets[0].data.push(avgVal);
+      dishChart.data.datasets[1].data.push(instantVal);
+      dishChart.update();
+    }
+
+    function appendStreamRow(r) {
+      liveRows.unshift(r);
+      if (liveRows.length > 15) liveRows.pop();
+      renderRows();
+    }
+
+    function renderRows() {
+      const tb = document.getElementById('stream-rows');
+      tb.innerHTML = '';
+      liveRows.forEach(row => {
+        const tr = document.createElement('tr');
+        let pillStyle = 'pill-served';
+        if (row.status === 'RETRY') pillStyle = 'pill-retry';
+        if (row.status === 'DLQ') pillStyle = 'pill-dlq';
+
+        tr.innerHTML = `
+          <td style="font-weight: 700; color: #6ee7b7;">${row.orderId}</td>
+          <td>${row.product}</td>
+          <td>${row.price}</td>
+          <td><span class="pill ${pillStyle}">${row.status}</span></td>
+          <td style="color: #cbd5e1;">${row.note}</td>
+        `;
+        tb.appendChild(tr);
+      });
+    }
+
+    async function dispatchOrder(mode) {
+      const qty = (mode === 'normal') ? 3 : 1;
+      try {
+        const res = await fetch('/api/order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ mode: mode, count: qty })
+        });
+        const resp = await res.json();
+        resp.items.forEach(el => {
+          let st = 'SERVED';
+          let msg = 'Published to food-orders';
+          if (mode === 'transient') {
+            st = 'RETRY';
+            msg = 'Kitchen busy -> routed to food-orders-retry';
+          } else if (mode === 'permanent') {
+            st = 'DLQ';
+            msg = 'Expired ticket -> routed to food-orders-dlq';
+          }
+          appendStreamRow({
+            orderId: el.order.orderId,
+            product: el.order.product,
+            price: `$${el.order.price.toFixed(2)}`,
+            status: st,
+            note: msg
+          });
+        });
+      } catch (err) {
+        console.error('Error dispatching food order:', err);
+      }
+    }
+
+    async function inspectDLQ() {
+      try {
+        const res = await fetch('/api/dlq');
+        const list = await res.json();
+        document.getElementById('table-heading').innerText = `Food DLQ Auditor (${list.length} Rejected Tickets)`;
+        const tb = document.getElementById('stream-rows');
+        tb.innerHTML = '';
+        if (list.length === 0) {
+          tb.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 24px; color: #34d399;">Dead Letter Queue is clear! All orders valid.</td></tr>';
+          return;
+        }
+        list.forEach(m => {
+          const tr = document.createElement('tr');
+          const payload = typeof m.payload === 'object' ? JSON.stringify(m.payload) : m.payload;
+          tr.innerHTML = `
+            <td style="font-weight: 700; color: #fb7185;">${m.key}</td>
+            <td>${m.source_topic}</td>
+            <td>Offset ${m.offset}</td>
+            <td><span class="pill pill-dlq">${m.cause}</span></td>
+            <td style="color: #cbd5e1;">${m.info}<br><small style="color: #64748b;">${payload}</small></td>
+          `;
+          tb.appendChild(tr);
+        });
+      } catch (err) {
+        console.error('DLQ fetch error:', err);
+      }
+    }
+
+    // Poller
+    setInterval(async () => {
+      try {
+        const r = await fetch('/api/metrics');
+        const data = await r.json();
+        updateMetricsUI(data);
+      } catch (e) {}
+    }, 3000);
+  </script>
+</body>
+</html>
