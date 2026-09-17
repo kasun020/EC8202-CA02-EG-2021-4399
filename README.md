@@ -109,7 +109,31 @@ Located in [schemas/order.avsc](schemas/order.avsc):
 pip install -r requirements.txt
 ```
 
-### 2. Automated End-to-End Live Demonstration
+### 2. Start Kafka Infrastructure (Docker)
+
+> **Windows users**: Docker Desktop uses a named pipe — set `DOCKER_HOST` first.
+
+```powershell
+# Required for Windows Docker Desktop
+$env:DOCKER_HOST = "npipe:////./pipe/dockerDesktopLinuxEngine"
+
+# Start Kafka + Schema Registry + Kafka-UI
+docker compose up -d
+```
+
+Wait ~15 seconds, then verify containers are running:
+```powershell
+$env:DOCKER_HOST = "npipe:////./pipe/dockerDesktopLinuxEngine"
+docker ps
+```
+
+| Service | URL |
+|---|---|
+| Kafka Broker | `localhost:9094` |
+| Schema Registry | `http://localhost:8086` |
+| Kafka UI | `http://localhost:8092` |
+
+### 3. Automated End-to-End Live Demonstration
 Run the automated demonstration script:
 ```powershell
 python run_live_demo.py
@@ -124,7 +148,7 @@ This executes:
 
 ---
 
-### 3. Component-by-Component CLI Execution
+### 4. Component-by-Component CLI Execution
 
 #### Start Consumer with Live Terminal Dashboard
 ```powershell
@@ -155,7 +179,7 @@ python -m src.dlq_auditor
 
 ---
 
-### 4. Interactive Live Web Dashboard
+### 5. Interactive Live Web Dashboard
 Launch the web interface:
 ```powershell
 python -m web.app
@@ -167,12 +191,13 @@ Open **[http://localhost:8052](http://localhost:8052)** in your browser:
 ---
 
 ## 🧪 Unit Testing
-Run the pytest test suite:
+Run the pytest test suite (no Docker required):
 ```powershell
 pytest -v
 ```
 
 Tests include:
+
 - `test_food_schema_structure`: Confirms `order.avsc` conformance.
 - `test_food_order_codec_roundtrip`: Validates binary encoding/decoding and wire format headers.
 - `test_invalid_food_orders`: Checks missing fields and price constraints.
