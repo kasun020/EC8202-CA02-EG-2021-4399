@@ -10,8 +10,8 @@ BASE_DIR = Path(__file__).resolve().parent
 SCHEMA_FILE_PATH = os.getenv("SCHEMA_FILE_PATH", str(BASE_DIR / "schemas" / "order.avsc"))
 
 # Kafka & Schema Registry Endpoints
-KAFKA_BOOTSTRAP_SERVERS = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092")
-SCHEMA_REGISTRY_URL = os.getenv("SCHEMA_REGISTRY_URL", "http://localhost:8085")
+KAFKA_BOOTSTRAP_SERVERS = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "localhost:9094")
+SCHEMA_REGISTRY_URL = os.getenv("SCHEMA_REGISTRY_URL", "http://localhost:8086")
 
 # Food Order Streaming Topics
 TOPIC_FOOD_ORDERS = os.getenv("TOPIC_FOOD_ORDERS", "food-orders")
