@@ -1,7 +1,7 @@
 {
   "type": "record",
   "name": "Order",
-  "namespace": "com.kavindu.foodorder",
+  "namespace": "com.kasun.foodorder",
   "doc": "Food delivery purchase transaction schema for real-time Kafka stream processing",
   "fields": [
     {

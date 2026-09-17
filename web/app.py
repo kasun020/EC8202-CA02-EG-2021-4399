@@ -1,5 +1,5 @@
 """
-FastAPI Real-Time Web Telemetry Dashboard for Kavindu's Food Streaming Pipeline.
+FastAPI Real-Time Web Telemetry Dashboard for Kasun's Food Streaming Pipeline.
 Runs on port 8052 with WebSocket support and interactive food order dispatchers.
 """
 
@@ -35,9 +35,9 @@ producer = FoodOrderProducer()
 active_sockets: List[WebSocket] = []
 
 # Background Consumer & Retry Worker
-main_consumer = FoodOrderConsumer(group_id="kavindu-web-consumer-group")
+main_consumer = FoodOrderConsumer(group_id="kasun-web-consumer-group")
 main_consumer.aggregator = aggregator
-retry_worker = FoodRetryWorker(group_id="kavindu-web-retry-group", backoff_base=1.0)
+retry_worker = FoodRetryWorker(group_id="kasun-web-retry-group", backoff_base=1.0)
 
 
 def start_workers():

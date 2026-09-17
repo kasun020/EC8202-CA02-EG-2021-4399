@@ -3,7 +3,7 @@ version: '3.8'
 services:
   kafka:
     image: confluentinc/cp-kafka:7.6.1
-    container_name: kavindu-food-kafka
+    container_name: kasun-food-kafka
     ports:
       - "9094:9094"
     environment:
@@ -24,7 +24,7 @@ services:
 
   schema-registry:
     image: confluentinc/cp-schema-registry:7.6.1
-    container_name: kavindu-food-schema-registry
+    container_name: kasun-food-schema-registry
     depends_on:
       - kafka
     ports:
@@ -36,7 +36,7 @@ services:
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
-    container_name: kavindu-food-ui
+    container_name: kasun-food-ui
     depends_on:
       - kafka
       - schema-registry
@@ -44,6 +44,6 @@ services:
       - "8092:8080"
     environment:
       DYNAMIC_CONFIG_ENABLED: 'true'
-      KAFKA_CLUSTERS_0_NAME: kavindu-food-cluster
+      KAFKA_CLUSTERS_0_NAME: kasun-food-cluster
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
       KAFKA_CLUSTERS_0_SCHEMAREGISTRY: http://schema-registry:8081

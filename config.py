@@ -1,5 +1,5 @@
 """
-Configuration settings for Kavindu's Real-Time Food Order Streaming System.
+Configuration settings for Kasun's Real-Time Food Order Streaming System.
 Defines Kafka brokers, Schema Registry, and dedicated food-order topics.
 """
 

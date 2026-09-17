@@ -1,5 +1,5 @@
 """
-Automated End-to-End Demonstration for Kavindu's Food Order Streaming Pipeline.
+Automated End-to-End Demonstration for Kasun's Food Order Streaming Pipeline.
 Demonstrates:
  1. Food order Avro encoding & Schema Registry registration.
  2. Real-time incremental running average price aggregation.
@@ -35,7 +35,7 @@ logger = logging.getLogger("FoodLiveDemo")
 
 def run_food_demo():
     console.print(Panel.fit(
-        "[bold green]Kavindu's Big Data Assignment: GourmetExpress Food Order Streaming System[/bold green]\n"
+        "[bold green]Kasun's Big Data Assignment: GourmetExpress Food Order Streaming System[/bold green]\n"
         "[white]Kafka Topics: 'food-orders', 'food-orders-retry', 'food-orders-dlq' | Avro Wire Format[/white]",
         border_style="green"
     ))
@@ -49,7 +49,7 @@ def run_food_demo():
 
     # 2. Start Consumer
     console.print("\n[bold yellow]Step 2: Starting FoodOrderConsumer & Real-Time Aggregator...[/bold yellow]")
-    main_consumer = FoodOrderConsumer(group_id="kavindu-demo-consumer-group")
+    main_consumer = FoodOrderConsumer(group_id="kasun-demo-consumer-group")
     c_thread = threading.Thread(
         target=main_consumer.start_polling,
         kwargs={"timeout": 0.5, "show_dashboard": False},
@@ -60,7 +60,7 @@ def run_food_demo():
 
     # 3. Start Retry Worker
     console.print("[bold yellow]Step 3: Starting FoodRetryWorker...[/bold yellow]")
-    retry_worker = FoodRetryWorker(group_id="kavindu-demo-retry-group", backoff_base=1.0)
+    retry_worker = FoodRetryWorker(group_id="kasun-demo-retry-group", backoff_base=1.0)
     r_thread = threading.Thread(
         target=retry_worker.start,
         kwargs={"timeout": 0.5},
@@ -125,7 +125,7 @@ def run_food_demo():
     auditor.display_report(rejected)
 
     console.print(Panel(
-        "[bold green]Kavindu's Live Demonstration Completed Successfully![/bold green]\n"
+        "[bold green]Kasun's Live Demonstration Completed Successfully![/bold green]\n"
         "Verified: Food Avro Schema, Running Average Meal Price, Kitchen Retry Backoff, and DLQ Rejections.",
         border_style="green"
     ))

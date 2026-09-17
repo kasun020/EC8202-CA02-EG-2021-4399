@@ -1,5 +1,5 @@
-# GourmetExpress: Real-Time Food Order Stream Processing Pipeline
-### Student Submission: Kavindu | Big Data Assignment Chapter 3
+# 🍔 GourmetExpress: Real-Time Food Order Streaming System
+### Student Submission: Kasun | Big Data Assignment Chapter 3
 
 A distributed stream processing engine built with **Apache Kafka**, **Apache Avro**, and **Python**. The system simulates a food delivery cloud kitchen platform that produces culinary meal orders, computes real-time running average dish prices, isolates kitchen delay bottlenecks via retry queues with exponential backoff, and traps unserviceable poison orders in a Dead Letter Queue (DLQ).
 
@@ -77,8 +77,8 @@ Located in [schemas/order.avsc](schemas/order.avsc):
 ```json
 {
   "type": "record",
-  "name": "Order",
-  "namespace": "com.kavindu.foodorder",
+  "name": "FoodOrder",
+  "namespace": "com.kasun.foodorder",
   "doc": "Food delivery purchase transaction schema for real-time Kafka stream processing",
   "fields": [
     {
@@ -211,13 +211,13 @@ Tests include:
 ## 📁 Project Structure
 
 ```
-kavindu/
+kasun/
 ├── docker-compose.yml           # Standalone Kafka infrastructure config
 ├── requirements.txt             # Python dependencies
 ├── pytest.ini                   # Pytest path settings
 ├── config.py                    # Food streaming topic & port configurations
 ├── schemas/
-│   └── order.avsc               # Required Avro schema (com.kavindu.foodorder)
+│   └── order.avsc               # Required Avro schema (com.kasun.foodorder)
 ├── src/
 │   ├── __init__.py
 │   ├── avro_codec.py            # Avro encoder/decoder (Schema Registry wire format)
