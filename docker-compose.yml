@@ -5,7 +5,7 @@ services:
     image: confluentinc/cp-kafka:7.6.1
     container_name: kavindu-food-kafka
     ports:
-      - "9094:9092"
+      - "9094:9094"
     environment:
       KAFKA_NODE_ID: 1
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
