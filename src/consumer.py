@@ -99,18 +99,18 @@ class StreamingMetricsAggregator:
 
     def create_rich_table(self) -> Table:
         """Constructs an emerald & gold styled CLI metrics dashboard."""
-        table = Table(title="GourmetExpress Real-Time Food Stream Aggregator", style="bold green")
+        table = Table(title="CeylonBites Real-Time Food Stream Aggregator", style="bold green")
         table.add_column("Telemetry Metric", style="bold white")
         table.add_column("Live Metric Value", style="bold green", justify="right")
 
         table.add_row("Orders Completed", str(self.completed_count))
-        table.add_row("Total Culinary Revenue", f"${self.total_revenue:,.2f}")
-        table.add_row("Running Average Meal Price", f"${self.running_average:,.2f}")
-        table.add_row("Min / Max Dish Price", f"${self.min_order_price or 0.0:,.2f} / ${self.max_order_price or 0.0:,.2f}")
+        table.add_row("Total Culinary Revenue", f"LKR {self.total_revenue:,.2f}")
+        table.add_row("Running Average Meal Price", f"LKR {self.running_average:,.2f}")
+        table.add_row("Min / Max Dish Price", f"LKR {self.min_order_price or 0.0:,.2f} / LKR {self.max_order_price or 0.0:,.2f}")
         table.add_row("Kitchen Delays (Retries)", f"[yellow]{self.retry_count}[/yellow]")
         table.add_row("Unserviceable (DLQ)", f"[red]{self.dlq_count}[/red]")
         if self.recent_order:
-            table.add_row("Latest Dish", f"{self.recent_order['orderId']} - {self.recent_order['product']} (${self.recent_order['price']:.2f})")
+            table.add_row("Latest Dish", f"{self.recent_order['orderId']} - {self.recent_order['product']} (LKR {self.recent_order['price']:.2f})")
         return table
 
 
@@ -223,7 +223,7 @@ class FoodOrderConsumer:
         metrics = self.aggregator.add_completed_order(order)
         logger.info(
             f"[ORDER COMPLETED] ID: {order['orderId']} | Dish: {order['product']} | "
-            f"Price: ${order['price']:.2f} | Running Avg: ${metrics['running_average_price']:.2f} "
+            f"Price: LKR {order['price']:.2f} | Running Avg: LKR {metrics['running_average_price']:.2f} "
             f"(Total Orders: {metrics['completed_orders']})"
         )
 

@@ -1,4 +1,4 @@
-# 🍔 GourmetExpress: Real-Time Food Order Streaming System
+# 🍔 CeylonBites: Real-Time Food Order Streaming System
 ### Student Submission: Kasun | Big Data Assignment Chapter 3
 
 A distributed stream processing engine built with **Apache Kafka**, **Apache Avro**, and **Python**. The system simulates a food delivery cloud kitchen platform that produces culinary meal orders, computes real-time running average dish prices, isolates kitchen delay bottlenecks via retry queues with exponential backoff, and traps unserviceable poison orders in a Dead Letter Queue (DLQ).

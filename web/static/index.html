@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GourmetExpress | Real-Time Food Stream Telemetry</title>
+  <title>CeylonBites | Real-Time Food Stream Telemetry</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -247,7 +247,7 @@
       <div class="brand">
         <div class="brand-logo">🍜</div>
         <div class="header">
-          <h1 class="glow-text">GourmetExpress Data Stream</h1>
+          <h1 class="glow-text">CeylonBites Real-Time Analytics</h1>
           <p class="tagline">Kasun's Kafka Telemetry Engine • Avro Serialization • Running Avg • Kitchen Retries • DLQ</p>
         </div>
       </div>
@@ -260,7 +260,7 @@
     <div class="metrics-row">
       <div class="metric-box">
         <div class="metric-title">Running Average Meal Price</div>
-        <div class="metric-value c-emerald" id="val-avg">$0.00</div>
+        <div class="metric-value c-emerald" id="val-avg">LKR 0.00</div>
         <div style="font-size: 0.72rem; color: var(--text-dim); margin-top: 4px;">Dynamic Incremental Formulation</div>
       </div>
       <div class="metric-box">
@@ -270,7 +270,7 @@
       </div>
       <div class="metric-box">
         <div class="metric-title">Culinary Gross Volume</div>
-        <div class="metric-value" id="val-revenue">$0.00</div>
+        <div class="metric-value" id="val-revenue">LKR 0.00</div>
         <div style="font-size: 0.72rem; color: var(--text-dim); margin-top: 4px;">Total Order Sum</div>
       </div>
       <div class="metric-box">
@@ -352,7 +352,7 @@
         labels: [],
         datasets: [
           {
-            label: 'Running Average ($)',
+            label: 'Running Average (LKR)',
             data: [],
             borderColor: '#10b981',
             backgroundColor: 'rgba(16, 185, 129, 0.12)',
@@ -361,7 +361,7 @@
             tension: 0.35
           },
           {
-            label: 'Dish Price ($)',
+            label: 'Dish Price (LKR)',
             data: [],
             borderColor: '#f59e0b',
             borderWidth: 1.5,
@@ -405,9 +405,9 @@
     initSocket();
 
     function updateMetricsUI(s) {
-      document.getElementById('val-avg').innerText = `$${(s.running_average_price || 0).toFixed(2)}`;
+      document.getElementById('val-avg').innerText = `LKR ${(s.running_average_price || 0).toFixed(2)}`;
       document.getElementById('val-orders').innerText = s.completed_orders || 0;
-      document.getElementById('val-revenue').innerText = `$${(s.total_revenue || 0).toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+      document.getElementById('val-revenue').innerText = `LKR ${(s.total_revenue || 0).toLocaleString(undefined, {minimumFractionDigits: 2})}`;
       document.getElementById('val-retry').innerText = s.retry_events || 0;
       document.getElementById('val-dlq').innerText = s.dlq_events || 0;
 
@@ -417,7 +417,7 @@
         appendStreamRow({
           orderId: item.orderId,
           product: item.product,
-          price: `$${item.price.toFixed(2)}`,
+          price: `LKR ${item.price.toFixed(2)}`,
           status: 'SERVED',
           note: 'Running average price updated'
         });
@@ -484,7 +484,7 @@
           appendStreamRow({
             orderId: el.order.orderId,
             product: el.order.product,
-            price: `$${el.order.price.toFixed(2)}`,
+            price: `LKR ${el.order.price.toFixed(2)}`,
             status: st,
             note: msg
           });

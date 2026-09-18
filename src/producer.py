@@ -1,5 +1,5 @@
 """
-Food Order Dispatcher & Producer for GourmetExpress Streaming Pipeline.
+Food Order Dispatcher & Producer for CeylonBites Streaming Pipeline.
 Produces purchase transactions to 'food-orders' with Avro serialization and fault simulation.
 """
 
@@ -117,7 +117,7 @@ class FoodOrderProducer:
                 callback=self._delivery_callback
             )
             self.producer.poll(0)
-            logger.info(f"[DISPATCHED] -> Topic: {topic} | Order: {order.get('orderId')} | Dish: {order.get('product')} | Price: ${order.get('price'):.2f}")
+            logger.info(f"[DISPATCHED] -> Topic: {topic} | Order: {order.get('orderId')} | Dish: {order.get('product')} | Price: LKR {order.get('price'):.2f}")
             return True
         except Exception as ex:
             logger.error(f"Failed to dispatch order {order}: {ex}")
@@ -154,7 +154,7 @@ class FoodOrderProducer:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Food Order Producer (GourmetExpress)")
+    parser = argparse.ArgumentParser(description="Food Order Producer (CeylonBites)")
     parser.add_argument("--count", type=int, default=10, help="Number of food orders to dispatch")
     parser.add_argument("--interval", type=float, default=0.5, help="Seconds between orders")
     parser.add_argument("--transient", type=int, nargs="*", default=[], help="Indices for kitchen timeout (e.g. 2 4)")

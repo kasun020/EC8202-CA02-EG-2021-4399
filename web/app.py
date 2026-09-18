@@ -49,7 +49,7 @@ def start_workers():
 
 start_workers()
 
-app = FastAPI(title="GourmetExpress Live Order Stream")
+app = FastAPI(title="CeylonBites Live Order Stream")
 static_folder = BASE_DIR / "static"
 static_folder.mkdir(parents=True, exist_ok=True)
 app.mount("/static", StaticFiles(directory=str(static_folder)), name="static")

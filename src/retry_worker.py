@@ -122,7 +122,7 @@ class FoodRetryWorker:
             clean_dish = dish.replace("KITCHEN_TIMEOUT_", "").replace("PERSISTENT_", "")
             logger.info(
                 f"[RETRY SUCCESSFUL] Order {order.get('orderId')} recovered on attempt {attempt}! "
-                f"Dish: {clean_dish}, Price: ${order.get('price'):.2f}"
+                f"Dish: {clean_dish}, Price: LKR {order.get('price'):.2f}"
             )
 
         self.consumer.commit(message=msg, asynchronous=False)

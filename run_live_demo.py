@@ -35,7 +35,7 @@ logger = logging.getLogger("FoodLiveDemo")
 
 def run_food_demo():
     console.print(Panel.fit(
-        "[bold green]Kasun's Big Data Assignment: GourmetExpress Food Order Streaming System[/bold green]\n"
+        "[bold green]Kasun's Big Data Assignment: CeylonBites Food Order Streaming System[/bold green]\n"
         "[white]Kafka Topics: 'food-orders', 'food-orders-retry', 'food-orders-dlq' | Avro Wire Format[/white]",
         border_style="green"
     ))
